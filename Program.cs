@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using test_app.TestCompareValues;
+using Tracking.TestCompareValues.Models;
 
 namespace Tracking
 {
@@ -9,18 +10,28 @@ namespace Tracking
         static void Main(string[] args)
         {
 
+            var nestedProp1 = new ExampleNestedProperty(){
+                NestedOne = 1,
+                NestedTwo = DateTime.Now
+            };
+
+            var nestedProp2 = new ExampleNestedProperty(){
+                NestedOne = 1,
+                NestedTwo = DateTime.Now
+            };
+
             var firstEntity = new TestEntity(){
                 one = 1,
                 two = 2,
                 three = 3,
-                four = "hey there i am not the same"
+                four = nestedProp1
             };
 
             var secondEntity = new TestEntity(){
                 one = 1,
                 two = 20,
                 three = 3,
-                four = "hey there"
+                four = nestedProp2
             };
 
             var changedProperties = firstEntity.GetChangedProperties<TestEntity>(secondEntity);

@@ -1,4 +1,5 @@
 using test_app.TestCompareValues.Attributes;
+using Tracking.TestCompareValues.Models;
 
 namespace test_app.TestCompareValues
 {
@@ -11,6 +12,6 @@ namespace test_app.TestCompareValues
 
         public int three { get; set; }
         [CompareValues]
-        public string four { get; set; }
+        public ExampleNestedProperty four { get; set; }
     }
 }

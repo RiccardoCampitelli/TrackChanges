@@ -6,9 +6,8 @@ using Tracking.TestCompareValues.Helpers;
 
 namespace test_app.TestCompareValues {
     public class TrackedEntity {
-       
 
-        private EntityProperty[] GetTrackedProperties<T> (T values) {
+        private EntityProperty[] GetEntityProperties<T> (T values, bool onlyTracked) {
 
             var type = values.GetType ();
             var properties = type.GetProperties ();
@@ -16,11 +15,18 @@ namespace test_app.TestCompareValues {
 
             foreach (var property in properties) {
 
-                var x = (CompareValues[]) property.GetCustomAttributes (typeof (CompareValues), false);
+                //   var x = (CompareValues[]) property.GetCustomAttributes (typeof (CompareValues), false);
 
                 var hasAttribute = Attribute.IsDefined (property, typeof (CompareValues));
 
-                if (hasAttribute) {
+                if (onlyTracked) {
+                    if (hasAttribute) {
+                        result.Add (new EntityProperty {
+                            value = property.GetValue (values, null),
+                                name = property.Name
+                        });
+                    }
+                } else {
                     result.Add (new EntityProperty {
                         value = property.GetValue (values, null),
                             name = property.Name
@@ -33,50 +39,12 @@ namespace test_app.TestCompareValues {
 
         }
 
-        private EntityProperty[] GetAllProperties<T>(T values){
+    
+        public bool EntityPropertiesEqual<T> (T newValues, bool onlyTracked) {
 
-             var type = values.GetType ();
-            var properties = type.GetProperties ();
-            var result = new List<EntityProperty> ();
+            var currentTrackedValues = GetEntityProperties (this, onlyTracked);
 
-            foreach (var property in properties) {
-
-               
-                    result.Add (new EntityProperty {
-                        value = property.GetValue (values, null),
-                            name = property.Name
-                    });
-                
-
-            }
-
-            return result.ToArray ();
-
-        }
-
-        public bool UserVariablesEqual<T>(T newValues){
-
-            var newValueProperties = GetAllProperties<T>(newValues);
-            var currentValueProperties = GetAllProperties(this);
-            
-
-            if(newValueProperties.Count() != currentValueProperties.Count())
-                return false;
-
-            for (int i = 0; i < newValueProperties.Count(); i++)
-            {
-                if(!EqualityHelper.JsonCompare(newValueProperties[i], currentValueProperties[i]))
-                    return false;
-            }
-
-            return true;
-        }
-
-        public bool TrackedPropertiesEqual<T> (T newValues) {
-
-            var currentTrackedValues = GetTrackedProperties (this);
-
-            var newTrackedValues = GetTrackedProperties<T> (newValues);
+            var newTrackedValues = GetEntityProperties<T> (newValues, onlyTracked);
 
             if (currentTrackedValues.Length != newTrackedValues.Length)
                 return false;
@@ -94,12 +62,12 @@ namespace test_app.TestCompareValues {
 
         }
 
-        public ChangedProperty[] GetChangedProperties<T> (T newValues) {
+        public ChangedProperty[] GetChangedTrackedProperties<T> (T newValues) {
             var changedProperties = new List<ChangedProperty> ();
 
-            var oldTrackedValues = GetTrackedProperties (this);
+            var oldTrackedValues = GetEntityProperties (this, true);
 
-            var newTrackedValues = GetTrackedProperties<T> (newValues);
+            var newTrackedValues = GetEntityProperties<T> (newValues, true);
 
             // TODO: Maybe wrap class and return error messages ?
             // if(currentTrackedValues.Count != newTrackedValues.Count) 
@@ -121,13 +89,6 @@ namespace test_app.TestCompareValues {
 
         }
 
-
         // public void UpdateUserVariables<T>(T newValues){
-
-     
-
-        public void DoSomething () {
-
-        }
     }
 }

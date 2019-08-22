@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using test_app.TestCompareValues.Attributes;
+using Tracking.TestCompareValues.Helpers;
 
 namespace test_app.TestCompareValues {
     public class TrackedEntity {
@@ -86,7 +87,7 @@ namespace test_app.TestCompareValues {
             //     return ;
 
             foreach (var newTrackedValue in newTrackedValues) {
-                var changedValue = oldTrackedValues.FirstOrDefault (x => (x.name == newTrackedValue.name) && (x.value != newTrackedValue.value));
+                var changedValue = oldTrackedValues.FirstOrDefault (x => (x.name == newTrackedValue.name) && (!EqualityHelper.JsonCompare(x.value, newTrackedValue.value)));
 
                 if (changedValue != null)
                     changedProperties.Add (new ChangedProperty () {
@@ -96,22 +97,7 @@ namespace test_app.TestCompareValues {
                     });
             }
 
-            //  currentTrackedValues.FirstOrDefault(y => y.name == x.name && y.value == )
-
-            // foreach (var newTrackedValue in newTrackedValues)
-            // {
-            //     foreach (var currentTrackedValue in currentTrackedValues)
-            //     {
-            //         if(!(newTrackedValue.value == currentTrackedValue.value && newTrackedValue.name == currentTrackedValue.name))
-            //             changedProperties.Add(
-            //                 new ChangedProperty{
-            //                 NewValue=newTrackedValue.value, 
-            //                 OldValue = currentTrackedValue.value, 
-            //                 PropertyName = newTrackedValue.name
-            //                 });
-            //     }
-            //     // not changed
-            // }
+        
 
             return changedProperties.ToArray ();
 

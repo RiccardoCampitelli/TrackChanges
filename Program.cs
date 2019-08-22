@@ -12,14 +12,14 @@ namespace Tracking
                 one = 1,
                 two = 2,
                 three = 3,
-                four = 4
+                four = "hey there i am not the same"
             };
 
             var secondEntity = new TestEntity(){
                 one = 1,
                 two = 20,
                 three = 3,
-                four = 4
+                four = "hey there"
             };
 
             var changedProperties = firstEntity.GetChangedProperties<TestEntity>(secondEntity);

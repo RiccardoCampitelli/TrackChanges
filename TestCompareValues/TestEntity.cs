@@ -11,6 +11,6 @@ namespace test_app.TestCompareValues
 
         public int three { get; set; }
         [CompareValues]
-        public int four { get; set; }
+        public string four { get; set; }
     }
 }

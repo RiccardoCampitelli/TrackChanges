@@ -8,11 +8,11 @@ namespace test_app.TestCompareValues {
     public class TrackedEntity {
        
 
-        private TrackedEntityProperty[] GetTrackedProperties<T> (T values) {
+        private EntityProperty[] GetTrackedProperties<T> (T values) {
 
             var type = values.GetType ();
             var properties = type.GetProperties ();
-            var result = new List<TrackedEntityProperty> ();
+            var result = new List<EntityProperty> ();
 
             foreach (var property in properties) {
 
@@ -21,7 +21,7 @@ namespace test_app.TestCompareValues {
                 var hasAttribute = Attribute.IsDefined (property, typeof (CompareValues));
 
                 if (hasAttribute) {
-                    result.Add (new TrackedEntityProperty {
+                    result.Add (new EntityProperty {
                         value = property.GetValue (values, null),
                             name = property.Name
                     });
@@ -33,8 +33,41 @@ namespace test_app.TestCompareValues {
 
         }
 
-        public bool UserVariablesEqual(){
+        private EntityProperty[] GetAllProperties<T>(T values){
 
+             var type = values.GetType ();
+            var properties = type.GetProperties ();
+            var result = new List<EntityProperty> ();
+
+            foreach (var property in properties) {
+
+               
+                    result.Add (new EntityProperty {
+                        value = property.GetValue (values, null),
+                            name = property.Name
+                    });
+                
+
+            }
+
+            return result.ToArray ();
+
+        }
+
+        public bool UserVariablesEqual<T>(T newValues){
+
+            var newValueProperties = GetAllProperties<T>(newValues);
+            var currentValueProperties = GetAllProperties(this);
+            
+
+            if(newValueProperties.Count() != currentValueProperties.Count())
+                return false;
+
+            for (int i = 0; i < newValueProperties.Count(); i++)
+            {
+                if(!EqualityHelper.JsonCompare(newValueProperties[i], currentValueProperties[i]))
+                    return false;
+            }
 
             return true;
         }

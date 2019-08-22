@@ -21,7 +21,7 @@ namespace Tracking
             };
 
             var firstEntity = new TestEntity(){
-                one = 1,
+                one = 2,
                 two = 2,
                 three = 3,
                 four = nestedProp1
@@ -29,17 +29,19 @@ namespace Tracking
 
             var secondEntity = new TestEntity(){
                 one = 1,
-                two = 20,
+                two = 2,
                 three = 3,
-                four = nestedProp2
+                four = nestedProp1
             };
 
             var changedProperties = firstEntity.GetChangedProperties<TestEntity>(secondEntity);
 
-            var isEqual = firstEntity.TrackedPropertiesEqual(secondEntity);
+            var trackedPropertiesEqual = firstEntity.TrackedPropertiesEqual(secondEntity);
+            var allPropertiesEqual = firstEntity.UserVariablesEqual(secondEntity);
 
             Console.WriteLine(JsonConvert.SerializeObject(changedProperties));
-            Console.WriteLine("IsEqual: {0}", isEqual);
+            Console.WriteLine("Tracked Properties Equal: {0}", trackedPropertiesEqual);
+            Console.WriteLine("All Properties Equal: {0}", allPropertiesEqual);
             
         }
     }

@@ -6,29 +6,7 @@ using Tracking.TestCompareValues.Helpers;
 
 namespace test_app.TestCompareValues {
     public class TrackedEntity {
-        private TrackedEntityProperty[] GetOwnTrackedProperties () {
-
-            var type = this.GetType ();
-            var properties = type.GetProperties ();
-            var result = new List<TrackedEntityProperty> ();
-
-            foreach (var property in properties) {
-
-                var x = (CompareValues[]) property.GetCustomAttributes (typeof (CompareValues), false);
-
-                var hasAttribute = Attribute.IsDefined (property, typeof (CompareValues));
-
-                if (hasAttribute) {
-                    result.Add (new TrackedEntityProperty {
-                        value = property.GetValue (this, null),
-                            name = property.Name
-                    });
-                }
-
-            }
-
-            return result.ToArray ();
-        }
+       
 
         private TrackedEntityProperty[] GetTrackedProperties<T> (T values) {
 
@@ -55,9 +33,15 @@ namespace test_app.TestCompareValues {
 
         }
 
-        public bool UserVariablesEqual<T> (T newValues) {
+        public bool UserVariablesEqual(){
 
-            var currentTrackedValues = GetOwnTrackedProperties ();
+
+            return true;
+        }
+
+        public bool TrackedPropertiesEqual<T> (T newValues) {
+
+            var currentTrackedValues = GetTrackedProperties (this);
 
             var newTrackedValues = GetTrackedProperties<T> (newValues);
 
@@ -80,7 +64,7 @@ namespace test_app.TestCompareValues {
         public ChangedProperty[] GetChangedProperties<T> (T newValues) {
             var changedProperties = new List<ChangedProperty> ();
 
-            var oldTrackedValues = GetOwnTrackedProperties ();
+            var oldTrackedValues = GetTrackedProperties (this);
 
             var newTrackedValues = GetTrackedProperties<T> (newValues);
 
@@ -104,26 +88,10 @@ namespace test_app.TestCompareValues {
 
         }
 
+
         // public void UpdateUserVariables<T>(T newValues){
 
-        //     var currentTrackedValues = GetOwnTrackedProperties();
-
-        //     var newTrackedValues = GetTrackedProperties<T>(newValues);
-
-        //     if(currentTrackedValues.Count != newTrackedValues.Count)
-        //         return;
-
-        //     foreach (var newTrackedValue in newTrackedValues)
-        //     {
-        //         var index = currentTrackedValues.FindIndex(x => x.value == newTrackedValue.value && x.name == newTrackedValue.name);
-        //         if(index == -1)
-        //             DoSomething(); //prop changed
-
-        //         // not changed
-        //     }
-
-        //     //assign new values
-        // }
+     
 
         public void DoSomething () {
 

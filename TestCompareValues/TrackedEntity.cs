@@ -65,11 +65,12 @@ namespace test_app.TestCompareValues {
                 return false;
 
             foreach (var newTrackedValue in newTrackedValues) {
-                var exists = currentTrackedValues.Any (x => x.value == newTrackedValue.value && x.name == newTrackedValue.name);
-                if (exists)
-                    return false; //prop changed
+                var exists = currentTrackedValues.Any (x => x.name == newTrackedValue.name &&
+                    !EqualityHelper.JsonCompare (x.value, newTrackedValue.value));
 
-                // not changed
+                if (exists)
+                    return false;
+
             }
 
             return true;
@@ -83,11 +84,13 @@ namespace test_app.TestCompareValues {
 
             var newTrackedValues = GetTrackedProperties<T> (newValues);
 
-            // if(currentTrackedValues.Count != newTrackedValues.Count)
+            // TODO: Maybe wrap class and return error messages ?
+            // if(currentTrackedValues.Count != newTrackedValues.Count) 
             //     return ;
 
             foreach (var newTrackedValue in newTrackedValues) {
-                var changedValue = oldTrackedValues.FirstOrDefault (x => (x.name == newTrackedValue.name) && (!EqualityHelper.JsonCompare(x.value, newTrackedValue.value)));
+                var changedValue = oldTrackedValues.FirstOrDefault (x => (x.name == newTrackedValue.name) &&
+                    (!EqualityHelper.JsonCompare (x.value, newTrackedValue.value)));
 
                 if (changedValue != null)
                     changedProperties.Add (new ChangedProperty () {
@@ -96,8 +99,6 @@ namespace test_app.TestCompareValues {
                             PropertyName = changedValue.name
                     });
             }
-
-        
 
             return changedProperties.ToArray ();
 

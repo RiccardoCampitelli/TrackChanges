@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using test_app.TestCompareValues;
 
 namespace Tracking
@@ -24,7 +25,7 @@ namespace Tracking
 
             var changedProperties = firstEntity.GetChangedProperties<TestEntity>(secondEntity);
 
-            Console.WriteLine("Hello World!");
+            Console.WriteLine(JsonConvert.SerializeObject(changedProperties));
         }
     }
 }

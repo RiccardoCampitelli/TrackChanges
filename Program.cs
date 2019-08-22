@@ -16,7 +16,7 @@ namespace Tracking
             };
 
             var nestedProp2 = new ExampleNestedProperty(){
-                NestedOne = 1,
+                NestedOne = 2,
                 NestedTwo = nestedProp1.NestedTwo
             };
 
@@ -34,7 +34,9 @@ namespace Tracking
                 four = nestedProp2
             };
 
-            var changedProperties = firstEntity.GetChangedTrackedProperties<TestEntity>(secondEntity);
+            var changedProperties = firstEntity.GetChangedProperties<TestEntity>(secondEntity, false);
+
+            firstEntity.Update(secondEntity);
 
             var trackedPropertiesEqual = firstEntity.EntityPropertiesEqual(secondEntity, true);
             var allPropertiesEqual = firstEntity.EntityPropertiesEqual(secondEntity, false);
@@ -42,6 +44,7 @@ namespace Tracking
             Console.WriteLine(JsonConvert.SerializeObject(changedProperties));
             Console.WriteLine("Tracked Properties Equal: {0}", trackedPropertiesEqual);
             Console.WriteLine("All Properties Equal: {0}", allPropertiesEqual);
+            Console.WriteLine(JsonConvert.SerializeObject(firstEntity));
             
         }
     }

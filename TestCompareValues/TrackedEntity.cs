@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using test_app.TestCompareValues.Attributes;
 using Tracking.TestCompareValues.Helpers;
 
@@ -14,8 +15,6 @@ namespace test_app.TestCompareValues {
             var result = new List<EntityProperty> ();
 
             foreach (var property in properties) {
-
-                //   var x = (CompareValues[]) property.GetCustomAttributes (typeof (CompareValues), false);
 
                 var hasAttribute = Attribute.IsDefined (property, typeof (CompareValues));
 
@@ -39,19 +38,18 @@ namespace test_app.TestCompareValues {
 
         }
 
-    
-        public bool EntityPropertiesEqual<T> (T newValues, bool onlyTracked) {
+        public bool EntityPropertiesEqual (object values, bool onlyTracked) {
 
-            var currentTrackedValues = GetEntityProperties (this, onlyTracked);
+            var currentValues = GetEntityProperties (this, onlyTracked);
 
-            var newTrackedValues = GetEntityProperties<T> (newValues, onlyTracked);
+            var newValues = GetEntityProperties (values, onlyTracked);
 
-            if (currentTrackedValues.Length != newTrackedValues.Length)
+            if (currentValues.Length != newValues.Length)
                 return false;
 
-            foreach (var newTrackedValue in newTrackedValues) {
-                var exists = currentTrackedValues.Any (x => x.name == newTrackedValue.name &&
-                    !EqualityHelper.JsonCompare (x.value, newTrackedValue.value));
+            foreach (var newValue in newValues) {
+                var exists = currentValues.Any (x => x.name == newValue.name &&
+                    !EqualityHelper.JsonCompare (x.value, newValue.value));
 
                 if (exists)
                     return false;
@@ -62,12 +60,12 @@ namespace test_app.TestCompareValues {
 
         }
 
-        public ChangedProperty[] GetChangedTrackedProperties<T> (T newValues) {
+        public ChangedProperty[] GetChangedProperties<T> (T values, bool onlyTracked) {
             var changedProperties = new List<ChangedProperty> ();
 
-            var oldTrackedValues = GetEntityProperties (this, true);
+            var oldTrackedValues = GetEntityProperties (this, onlyTracked);
 
-            var newTrackedValues = GetEntityProperties<T> (newValues, true);
+            var newTrackedValues = GetEntityProperties<T> (values, onlyTracked);
 
             // TODO: Maybe wrap class and return error messages ?
             // if(currentTrackedValues.Count != newTrackedValues.Count) 
@@ -89,6 +87,23 @@ namespace test_app.TestCompareValues {
 
         }
 
-        // public void UpdateUserVariables<T>(T newValues){
+        public void Update<T> (T newValues) {
+
+            Type type = this.GetType();
+
+            var changedProperties = GetChangedProperties (newValues, false);
+
+            var localProperties = GetEntityProperties(this,false);
+
+            var propertiesToUpdate = localProperties.Where(prop => changedProperties.Any(x => x.PropertyName == prop.name));
+
+            foreach (var propertyToUpdate in propertiesToUpdate)
+            {
+                PropertyInfo prop = type.GetProperty(propertyToUpdate.name);
+                
+                prop.SetValue(this, changedProperties.First(x => x.PropertyName == propertyToUpdate.name).NewValue, null);
+            }
+
+        }
     }
 }

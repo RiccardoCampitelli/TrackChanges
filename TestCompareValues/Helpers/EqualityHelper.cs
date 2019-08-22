@@ -20,7 +20,7 @@ namespace Tracking.TestCompareValues.Helpers {
     // public static bool DeepCompare (this object obj, object another) {
     //     if (ReferenceEquals (obj, another)) return true;
     //     if ((obj == null) || (another == null)) return false;
-    //     //Compare two object's class, return false if they are difference
+    //     //Compare two object's class, return false if they are different
     //     if (obj.GetType () != another.GetType ()) return false;
 
     //     var result = true;

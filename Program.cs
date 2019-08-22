@@ -36,7 +36,11 @@ namespace Tracking
 
             var changedProperties = firstEntity.GetChangedProperties<TestEntity>(secondEntity);
 
+            var isEqual = firstEntity.UserVariablesEqual(secondEntity);
+
             Console.WriteLine(JsonConvert.SerializeObject(changedProperties));
+            Console.WriteLine("IsEqual: {0}", isEqual);
+            
         }
     }
 }
